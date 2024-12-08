@@ -24,7 +24,6 @@ const char MAIN_page[] PROGMEM = R"=====(
       h1 { font-size: 2.0rem; color:#2980b9; }
 
       .content {
-        /* flex: auto;  */
         overflow: auto;
         height: 400px;
       }
@@ -135,57 +134,53 @@ const char MAIN_page[] PROGMEM = R"=====(
 
     <script>
       function playSong(songNumber, songName) {
-        // Cập nhật trạng thái hiển thị tên bài hát
         document.getElementById("play_status").innerText = `Status: Playing - ${songName}`;
-        
-        // Gửi lệnh phát bài hát
+
         const sobaihat = songNumber.toString();
         sendData(sobaihat);
       }
       
-      let isPlaying = false; // Bắt đầu ở trạng thái chưa phát
-      // Hàm toggle giữa Pause và Play/Continue
+      let isPlayingMusic = false; // Bắt đầu ở trạng thái chưa phát
       function togglePlayPause() {
         const toggleIcon = document.getElementById("toggleIcon");
         const playStatus = document.getElementById("play_status");
         
-        if (isPlaying) {
-          sendData('PE'); // Gửi lệnh Pause
-          toggleIcon.innerHTML = "&#9654;"; // Biểu tượng Pause
-          playStatus.innerHTML = "Status: Paused";
-        } else {
-          sendData('PY'); // Gửi lệnh Play
-          toggleIcon.innerHTML = "&#9208;" // Biểu tượng Play
+        if (!isPlayingMusic) {
+          sendData('PY');
+          toggleIcon.innerHTML = "&#9208;" // Biểu tượng Pause
           playStatus.innerHTML = "Status: Playing";
+          isPlayingMusic = true;
+        } else {
+          sendData('PE');
+          toggleIcon.innerHTML = "&#9654;"; // Biểu tượng Play
+          playStatus.innerHTML = "Status: Paused";
+          isPlayingMusic = false;
         }
-        isPlaying = !isPlaying; // Đảo trạng thái
       }
 
       let isRepeating = false; // Bắt đầu không Repeat
-      // Hàm toggle giữa Repeat và No Repeat
       function toggleRepeat() {
         const togglerepeat = document.getElementById("togglerepeat");
         const playStatus = document.getElementById("play_status");
 
-        // Kiểm tra trạng thái hiện tại của play (Playing hay Paused)
         const currentStatus = playStatus.innerHTML;
         
         if (!isRepeating) {
-          sendData('RP'); // Gửi lệnh Repeat
+          sendData('RP');
           if (currentStatus.includes("Playing")) {
             playStatus.innerHTML = "Status: Playing - Repeat"; 
           } else {
             playStatus.innerHTML = "Status: Paused - Repeat"; 
           }
         } else {
-          sendData('NRP'); // Gửi lệnh không Repeat
+          sendData('NRP');
           if (currentStatus.includes("Playing")) {
             playStatus.innerHTML = "Status: Playing - No Repeat"; 
           } else {
             playStatus.innerHTML = "Status: Paused - No Repeat"; 
           }
         }
-        isRepeating = !isRepeating; // Đảo trạng thái
+        isRepeating = !isRepeating;
       }
 
       function sendData(CMD) {
@@ -213,6 +208,5 @@ const char MAIN_page[] PROGMEM = R"=====(
     </script>
   </body>
 </html>
-
 
 )=====";
